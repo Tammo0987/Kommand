@@ -35,10 +35,6 @@ And this is how you register and execute them:
 package de.tammo.kommand.test.executor
 
 import de.tammo.kommand.executor.CommandExecutor
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 
 class CommandExecutorTest {
 
