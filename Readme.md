@@ -1,8 +1,3 @@
 # Kommand
 
-## Todo
-+ git init
-+ gitignore
-+ readme jitback?
-+ Release tag
-+ Kotlin reflection?
+A description will be provided.
