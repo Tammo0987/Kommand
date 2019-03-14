@@ -55,9 +55,14 @@ compileTestKotlin {
 }
 
 shadowJar {
-    baseName = 'Kommand'
+    archiveName = "$baseName-$version.$extension"
 }
 
 test {
     useJUnitPlatform()
 }
+
+artifacts {
+    archives shadowJar
+}
+

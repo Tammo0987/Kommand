@@ -1,3 +1,0 @@
-install:
-  - chmod +x gradlew
-  - ./gradlew clean shadowJar
