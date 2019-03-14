@@ -1,6 +1,6 @@
 # Kommand
 
-Kommand is a lightweight, declarative command framework written in Kotlin. You can declare command models vie annotations.
+Kommand is a lightweight, declarative command framework written in Kotlin. You can declare command models via annotations.
 The commands will be executed through reflections.
 
 ## Example
