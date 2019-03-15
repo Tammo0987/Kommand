@@ -47,7 +47,7 @@ class CommandExecutorTest {
 
 Look in the unit tests to see more examples.
 
-## Build with Gradle
+## Gradle Dependency
 
 You have to add the `jitpack` repository:
 
