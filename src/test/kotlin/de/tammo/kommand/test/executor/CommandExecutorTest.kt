@@ -1,6 +1,7 @@
 package de.tammo.kommand.test.executor
 
 import de.tammo.kommand.executor.CommandExecutor
+import de.tammo.kommand.result.CommandResult
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -10,46 +11,45 @@ import org.junit.jupiter.api.TestInstance
 class CommandExecutorTest {
 
     @BeforeAll
-    fun composeCommand() = CommandExecutor.INSTANCE.register(listOf(ExecutorTestCommand::class.java))
+    fun composeCommand() = CommandExecutor.register(ExecutorTestCommand::class)
 
     @Test
     fun `test default route`() {
-        assertTrue(CommandExecutor.INSTANCE.execute("executor"))
-        assertTrue(CommandExecutor.INSTANCE.execute("Executor"))
-        assertTrue(CommandExecutor.INSTANCE.execute("alias"))
-        assertTrue(CommandExecutor.INSTANCE.execute("Alias"))
-        assertFalse(CommandExecutor.INSTANCE.execute("Label"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("executor"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("Executor"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("alias"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("Alias"))
+        assertEquals(CommandResult.COMMAND_NOT_FOUND, CommandExecutor.execute("Label"))
     }
 
     @Test
     fun `test sub commands`() {
-        assertTrue(CommandExecutor.INSTANCE.execute("executor sub"))
-        assertTrue(CommandExecutor.INSTANCE.execute("executor Sub"))
-        assertTrue(CommandExecutor.INSTANCE.execute("Executor Sub"))
-        assertFalse(CommandExecutor.INSTANCE.execute("Label Sub"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("executor sub"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("executor Sub"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("Executor Sub"))
+        assertEquals(CommandResult.COMMAND_NOT_FOUND, CommandExecutor.execute("Label Sub"))
     }
 
     @Test
     fun `test routing`() {
-        assertTrue(CommandExecutor.INSTANCE.execute("executor route"))
-        assertTrue(CommandExecutor.INSTANCE.execute("executor Route"))
-        assertTrue(CommandExecutor.INSTANCE.execute("Executor Route"))
-
-        assertFalse(CommandExecutor.INSTANCE.execute("Executor AnotherRoute"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("executor route"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("executor Route"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("Executor Route"))
+        assertEquals(CommandResult.ROUTE_NOT_FOUND, CommandExecutor.execute("Executor AnotherRoute"))
     }
 
     @Test
     fun `test parameter execution`() {
-        assertTrue(CommandExecutor.INSTANCE.execute("executor parameters string 0"))
-        assertFalse(CommandExecutor.INSTANCE.execute("executor parameters string"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("executor parameters string 0"))
+        assertEquals(CommandResult.WRONG_PARAMETERS, CommandExecutor.execute("executor parameters string"))
     }
 
     @Test
     fun `test optional parameters`() {
-        assertTrue(CommandExecutor.INSTANCE.execute("executor optional string 0"))
-        assertTrue(CommandExecutor.INSTANCE.execute("executor optional string"))
-        assertFalse(CommandExecutor.INSTANCE.execute("executor optional"))
-        assertFalse(CommandExecutor.INSTANCE.execute("executor optional string 0 anotherParam"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("executor optional string 0"))
+        assertEquals(CommandResult.SUCCESS, CommandExecutor.execute("executor optional string"))
+        assertEquals(CommandResult.WRONG_PARAMETERS, CommandExecutor.execute("executor optional"))
+        assertEquals(CommandResult.WRONG_PARAMETERS, CommandExecutor.execute("executor optional string 0 anotherParam"))
     }
 
 }

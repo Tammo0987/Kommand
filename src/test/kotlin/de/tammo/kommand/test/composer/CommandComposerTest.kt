@@ -17,7 +17,7 @@ class CommandComposerTest {
 
     @BeforeAll
     fun composeCommand() {
-        this.testCommand = CommandModelComposer.INSTANCE.compose(TestCommand::class.java)
+        this.testCommand = CommandModelComposer.compose(TestCommand::class)
     }
 
     @Nested
@@ -57,7 +57,7 @@ class CommandComposerTest {
     @Nested
     inner class TestParameterComposer {
 
-        private val parameters = this@CommandComposerTest.testCommand.routes.elementAt(0).parameters
+        private val parameters = this@CommandComposerTest.testCommand.routes.find { it.name == "parameter" }!!.parameters
 
         @Test
         fun `test parameters`() {
@@ -65,12 +65,12 @@ class CommandComposerTest {
 
             val parameter = this.parameters.find { it.name == "test" }!!
 
-            assertEquals(String::class.java, parameter.type)
+            assertEquals(String::class, parameter.type)
             assertFalse(parameter.optional)
 
             val optionalParameter = this.parameters.find { it.name == "optional" }!!
 
-            assertEquals(String::class.java, optionalParameter.type)
+            assertEquals(String::class, optionalParameter.type)
             assertTrue(optionalParameter.optional)
         }
 
