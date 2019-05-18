@@ -2,26 +2,36 @@ package de.tammo.kommand.converter
 
 import de.tammo.kommand.converter.impl.IntInputConverter
 import de.tammo.kommand.converter.impl.StringInputConverter
+import kotlin.reflect.KClass
 
-class InputConverterRegistry {
+/**
+ * Registry for [InputConverters][InputConverter].
+ *
+ * @author Tammo0987
+ * @since 1.0
+ */
+object InputConverterRegistry {
 
-    companion object {
-        val INSTANCE = InputConverterRegistry().apply {
-            listOf(
-                    StringInputConverter(),
-                    IntInputConverter()
-            ).forEach { this.register(it) }
-        }
-    }
+    /**
+     * List of registered [InputConverter].
+     */
+    private val inputConverters = mutableListOf<InputConverter<*>>(StringInputConverter, IntInputConverter)
 
-    private val inputConverters = ArrayList<InputConverter<*>>()
+    /**
+     * Register an [InputConverter].
+     *
+     * @param [inputConverter] List of [InputConverter], that will be registered.
+     */
+    @Suppress("unused")
+    fun register(vararg inputConverter: InputConverter<*>) = inputConverters.addAll(inputConverter)
 
-    fun register(inputConverter: InputConverter<*>) {
-        this.inputConverters.add(inputConverter)
-    }
-
-    fun inputConverter(type: Class<*>): InputConverter<*>? {
-        return this.inputConverters.find { it.compatibleTypes().contains(type) }
-    }
+    /**
+     * Get a specific [InputConverter] for a type [type].
+     *
+     * @param [type] Compatible type for the [InputConverter].
+     *
+     * @return Compatible [InputConverter] if found, else null.
+     */
+    fun inputConverter(type: KClass<*>) = inputConverters.find { it.compatibleTypes().contains(type) }
 
 }

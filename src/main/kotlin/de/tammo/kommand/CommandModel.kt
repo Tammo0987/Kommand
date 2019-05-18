@@ -1,15 +1,36 @@
 package de.tammo.kommand
 
-data class CommandModel (
+import de.tammo.kommand.result.CommandResult
+
+/**
+ * Stores information about a command and can execute it.
+ *
+ * @param [label] Label of the command.
+ * @param [aliases] [Collection] of all possible aliases for [label].
+ * @param [routes] [Collection] of all declared [CommandRoutes][CommandRoute].
+ * @param [subModels] [Collection] of all declared sub [CommandModels][CommandModel].
+ *
+ * @author Tammo0987
+ * @since 1.0
+ */
+class CommandModel(
     val label: String,
+    val description: String,
     val aliases: Collection<String> = emptyList(),
     val routes: Collection<CommandRoute> = emptyList(),
     val subModels: Collection<CommandModel> = emptyList()
 ) {
 
-    fun execute(parameters: List<String>): Boolean {
+    /**
+     * Finds and executes a sub command or a [CommandRoute].
+     *
+     * @param [parameters] [List] of all parsed command arguments.
+     *
+     * @return [CommandResult] of the execution.
+     */
+    fun execute(parameters: List<String>): CommandResult {
         if (parameters.isEmpty()) {
-            val defaultRoute = this.route("")?: return false
+            val defaultRoute = this.route("")?: return CommandResult.ROUTE_NOT_FOUND
             return defaultRoute.execute(emptyList())
         }
 
@@ -17,15 +38,23 @@ data class CommandModel (
             val label = parameters[0].toLowerCase()
             val subCommandModel = this.subModels.find { it.label.toLowerCase() == label }
 
+
             if (subCommandModel != null) {
                 return subCommandModel.execute(parameters.drop(1))
             }
         }
 
-        val route = this.route(parameters[0].toLowerCase())?: return false
+        val route = this.route(parameters[0].toLowerCase())?: return CommandResult.ROUTE_NOT_FOUND
         return route.execute(parameters.drop(1))
     }
 
-    private fun route(name: String): CommandRoute? = this.routes.find { it.name == name }
+    /**
+     * Finds a [CommandRoute] by name.
+     *
+     * @param [name] Name of the [CommandRoute] to find.
+     *
+     * @return If found, a [CommandRoute] instance, else null.
+     */
+    fun route(name: String) = this.routes.find { it.name == name }
 
 }

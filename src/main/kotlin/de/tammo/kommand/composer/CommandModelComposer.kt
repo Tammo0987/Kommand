@@ -2,25 +2,36 @@ package de.tammo.kommand.composer
 
 import de.tammo.kommand.CommandModel
 import de.tammo.kommand.annotation.Model
+import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
 
-class CommandModelComposer private constructor() {
+/**
+ * Composing a [CommandModel] from a class, which is declared as command with the [Model] annotation.
+ *
+ * @author Tammo0987
+ * @since 1.0
+ */
+object CommandModelComposer {
 
-    companion object {
-        val INSTANCE = CommandModelComposer()
-    }
-
-    fun compose(clazz: Class<*>): CommandModel {
-        if (!clazz.isAnnotationPresent(Model::class.java)) {
-            throw IllegalStateException("${clazz.name} does not declare an annotation of type Model")
+    /**
+     * Composing and scanning a [KClass] to create a [CommandModel] instance.
+     *
+     * @param [clazz] [KClass] to compose.
+     *
+     * @return [CommandModel] instance.
+     */
+    fun compose(clazz: KClass<*>): CommandModel {
+        if (clazz.findAnnotation<Model>() == null) {
+            throw IllegalStateException("${clazz.simpleName} does not declare an annotation of type Model")
         }
 
-        val routes = CommandRouteComposer.INSTANCE.compose(clazz)
-        val model = clazz.getDeclaredAnnotation(Model::class.java)
+        val routes = CommandRouteComposer.compose(clazz)
+        val model = clazz.findAnnotation<Model>()!!
 
         val aliases = model.aliases.toList()
-        val subModels = model.subModels.map { this.compose(it.java) }
+        val subModels = model.subModels.map { compose(it) }
 
-        return CommandModel(model.label, aliases, routes, subModels)
+        return CommandModel(model.label, model.description, aliases, routes, subModels)
     }
 
 }
