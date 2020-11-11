@@ -56,7 +56,7 @@ object CommandExecutor {
      */
     fun commandModel(label: String) = commands.find {
         it.label.toLowerCase() == label.toLowerCase() ||
-                it.aliases.map { alias -> alias.toLowerCase() }.contains(label.toLowerCase())
+                it.aliases.find { alias -> alias.toLowerCase() == label.toLowerCase() }
     }
 
 }
